@@ -22,17 +22,12 @@
 
 #if defined(TARGET_DARWIN_OSX)
 
-#include <string>
-#include <vector>
-
 #include "windowing/WinSystem.h"
 #include "threads/CriticalSection.h"
 #include "threads/Timer.h"
 
-typedef struct SDL_Surface SDL_Surface;
-
+typedef struct _CGLContextObject *CGLContextObj;
 class IDispResource;
-class CWinEventsOSX;
 
 class CWinSystemOSX : public CWinSystemBase, public ITimerCallback
 {
@@ -49,6 +44,7 @@ public:
   virtual bool DestroyWindowSystem() override;
   virtual bool CreateNewWindow(const std::string& name, bool fullScreen, RESOLUTION_INFO& res) override;
   virtual bool DestroyWindow() override;
+  bool         DestroyWindowInternal();
   virtual bool ResizeWindow(int newWidth, int newHeight, int newLeft, int newTop) override;
   bool         ResizeWindowInternal(int newWidth, int newHeight, int newLeft, int newTop, void *additional);
   virtual bool SetFullScreen(bool fullScreen, RESOLUTION_INFO& res, bool blankOtherDisplays) override;
@@ -64,15 +60,11 @@ public:
   virtual void EnableTextInput(bool bEnable) override;
   virtual bool IsTextInputEnabled() override;
 
-  virtual std::string GetClipboardText(void) override;
-
-  void Register(IDispResource *resource);
-  void Unregister(IDispResource *resource);
+  virtual void Register(IDispResource *resource);
+  virtual void Unregister(IDispResource *resource);
   
   virtual int GetNumScreens() override;
   virtual int GetCurrentScreen() override;
-
-  virtual std::unique_ptr<CVideoSync> GetVideoSync(void *clock) override;
   
   void        WindowChangedScreen();
 
@@ -81,13 +73,19 @@ public:
   void        HandleOnResetDevice();
   void        StartLostDeviceTimer();
   void        StopLostDeviceTimer();
+
   
-  void* GetCGLContextObj();
-  void* GetNSOpenGLContext();
+  void         SetMovedToOtherScreen(bool moved) { m_movedToOtherScreen = moved; }
+  int          CheckDisplayChanging(uint32_t flags);
+  void         SetFullscreenWillToggle(bool toggle){ m_fullscreenWillToggle = toggle; }
+  bool         GetFullscreenWillToggle(){ return m_fullscreenWillToggle; }
+  
+  CGLContextObj  GetCGLContextObj();
+
+  virtual std::string  GetClipboardText(void) override;
+  float        CocoaToNativeFlip(float y);
 
 protected:
-  virtual std::unique_ptr<KODI::WINDOWING::IOSScreenSaver> GetOSScreenSaverImpl() override;
-  
   void  HandlePossibleRefreshrateChange();
   void* CreateWindowedContext(void* shareCtx);
   void* CreateFullScreenContext(int screen_index, void* shareCtx);
@@ -100,19 +98,21 @@ protected:
   void  StartTextInput();
   void  StopTextInput();
 
-  void* m_glContext;
-  static void* m_lastOwnedContext;
-  SDL_Surface* m_SDLSurface;
-  CWinEventsOSX *m_osx_events;
+  void                        *m_appWindow;
+  void                        *m_glView;
+  static void                 *m_lastOwnedContext;
   bool                         m_obscured;
   unsigned int                 m_obscured_timecheck;
+  std::string                  m_name;
 
-  bool                         m_can_display_switch;
+  bool                         m_use_system_screensaver;
   bool                         m_movedToOtherScreen;
+  bool                         m_fullscreenWillToggle;
   int                          m_lastDisplayNr;
-  void                        *m_windowDidMove;
-  void                        *m_windowDidReSize;
-  void                        *m_windowChangedScreen;
+  int                          m_lastWidth;
+  int                          m_lastHeight;
+  int                          m_lastX;
+  int                          m_lastY;
   double                       m_refreshRate;
 
   CCriticalSection             m_resourceSection;
@@ -120,6 +120,7 @@ protected:
   CTimer                       m_lostDeviceTimer;
   bool                         m_delayDispReset;
   XbmcThreads::EndTime         m_dispResetTimer;
+  CCriticalSection             m_critSection;
 };
 
 #endif

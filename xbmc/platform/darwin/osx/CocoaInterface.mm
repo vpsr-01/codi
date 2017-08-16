@@ -49,17 +49,12 @@ static CVDisplayLinkRef displayLink = NULL;
 
 CGDirectDisplayID Cocoa_GetDisplayIDFromScreen(NSScreen *screen);
 
-NSOpenGLContext* Cocoa_GL_GetCurrentContext(void)
-{
-  return (NSOpenGLContext *)g_Windowing.GetNSOpenGLContext();
-}
-
 uint32_t Cocoa_GL_GetCurrentDisplayID(void)
 {
   // Find which display we are on from the current context (default to main display)
   CGDirectDisplayID display_id = kCGDirectMainDisplay;
 
-  NSOpenGLContext* context = Cocoa_GL_GetCurrentContext();
+   NSOpenGLContext* context = [NSOpenGLContext currentContext];
   if (context)
   {
     NSView* view;
@@ -366,6 +361,13 @@ void Cocoa_HideMouse()
 void Cocoa_ShowMouse()
 {
   [NSCursor unhide];
+}
+
+static BOOL hidden = FALSE;
+
+bool Cocoa_IsMouseHidden()
+{
+  return hidden;
 }
 
 //---------------------------------------------------------------------------------
