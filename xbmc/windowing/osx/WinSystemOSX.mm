@@ -411,6 +411,15 @@ void CWinSystemOSX::UpdateResolutions()
   GetScreenResolution(&w, &h, &fps, 0);
   UpdateDesktopResolution(CDisplaySettings::GetInstance().GetResolutionInfo(RES_DESKTOP), 0, w, h, fps);
 
+  NSString *dispName = screenNameForDisplay(GetDisplayID(0));
+
+  if (dispName != nil)
+  {
+    CDisplaySettings::GetInstance().GetResolutionInfo(RES_DESKTOP).strOutput = [dispName UTF8String];
+  }
+
+  CDisplaySettings::GetInstance().ClearCustomResolutions();
+
   // see resolution.h enum RESOLUTION for how the resolutions
   // have to appear in the resolution info vector in CDisplaySettings
   // add the desktop resolutions of the other screens
@@ -420,12 +429,21 @@ void CWinSystemOSX::UpdateResolutions()
     // get current resolution of screen i
     GetScreenResolution(&w, &h, &fps, i);
     UpdateDesktopResolution(res, i, w, h, fps);
+    dispName = screenNameForDisplay(GetDisplayID(i));
+
+    if (dispName != nil)
+    {
+      res.strOutput = [dispName UTF8String];
+    }
+
     CDisplaySettings::GetInstance().AddResolutionInfo(res);
   }
 
   // now just fill in the possible reolutions for the attached screens
   // and push to the resolution info vector
   FillInVideoModes();
+
+  CDisplaySettings::GetInstance().ApplyCalibrations();
 }
 
 void CWinSystemOSX::GetScreenResolution(int* w, int* h, double* fps, int screenIdx)
