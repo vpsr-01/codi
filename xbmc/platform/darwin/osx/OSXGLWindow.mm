@@ -18,7 +18,6 @@
  *
  */
 
-#define BOOL XBMC_BOOL
 #include "Application.h"
 #include "guilib/GUIWindowManager.h"
 #include "messaging/ApplicationMessenger.h"
@@ -27,25 +26,12 @@
 #include "platform/darwin/DarwinUtils.h"
 #include "windowing/osx/WinEventsOSX.h"
 #include "windowing/WindowingFactory.h"
-#undef BOOL
 
 #import "OSXGLView.h"
 #import "OSXGLWindow.h"
 
 //------------------------------------------------------------------------------------------
 @implementation OSXGLWindow
-
-+(void) SetMenuBarVisible
-{
-  NSApplicationPresentationOptions options = NSApplicationPresentationDefault;
-  [NSApp setPresentationOptions:options];
-}
-
-+(void) SetMenuBarInvisible
-{
-  NSApplicationPresentationOptions options = NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock;
-  [NSApp setPresentationOptions:options];
-}
 
 -(id) initWithContentRect:(NSRect)box styleMask:(uint)style
 {
@@ -92,6 +78,7 @@
     if ([context view])
     {
       NSPoint window_origin = [[[context view] window] frame].origin;
+      window_origin.y = g_Windowing.CocoaToNativeFlip(window_origin.y);
       XBMC_Event newEvent;
       memset(&newEvent, 0, sizeof(newEvent));
       newEvent.type = XBMC_VIDEOMOVE;
@@ -129,13 +116,15 @@
 -(void)windowDidEndLiveResize:(NSNotification *)aNotification
 {
   //NSLog(@"windowDidEndLiveResize");
-  NSRect rect = [self contentRectForFrameRect:[self frame]];
+  NSRect rect = [self frame]; //[self contentRectForFrameRect:[self frame]];
 
   if(!g_Windowing.IsFullScreen())
   {
-    int RES_SCREEN = g_Windowing.DesktopResolution(g_Windowing.GetCurrentScreen());
-    if(((int)rect.size.width == CDisplaySettings::GetInstance().GetResolutionInfo(RES_SCREEN).iWidth) &&
-       ((int)rect.size.height == CDisplaySettings::GetInstance().GetResolutionInfo(RES_SCREEN).iHeight))
+    int windowModeWidth = CDisplaySettings::GetInstance().GetResolutionInfo(RES_WINDOW).iWidth;
+    int windowModeHeight = CDisplaySettings::GetInstance().GetResolutionInfo(RES_WINDOW).iHeight;
+
+    if(((int)rect.size.width == windowModeWidth) &&
+       ((int)rect.size.height == windowModeHeight))
       return;
   }
 
@@ -322,4 +311,10 @@
 {
   return YES;
 }
+
+- (BOOL)  isFullScreen
+{
+  return (([self styleMask] & NSFullScreenWindowMask) == NSFullScreenWindowMask);
+}
+
 @end

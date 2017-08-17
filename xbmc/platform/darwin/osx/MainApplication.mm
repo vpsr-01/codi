@@ -221,7 +221,7 @@ static void setupApplicationMenu(void)
 
 - (void) mainLoopThread:(id)arg
 {
-  [[NSThread currentThread] setName:@"MCRuntimeLib"];
+  [[NSThread currentThread] setName:@"KodiMain"];
 
 #if defined(DEBUG)
   struct rlimit rlim;

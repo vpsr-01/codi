@@ -18,10 +18,8 @@
  *
  */
 
-#define BOOL XBMC_BOOL
 #include "system_gl.h"
 #include "platform/darwin/osx/CocoaInterface.h"
-#undef BOOL
 
 #import "OSXGLView.h"
 
@@ -48,9 +46,6 @@
 
     GLint swapInterval = 1;
     [m_glcontext setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
-
-    m_trackingArea = nullptr;
-    [self updateTrackingAreas];
   }
   
   return self;
@@ -59,12 +54,6 @@
 - (void)dealloc
 {
   //NSLog(@"OSXGLView dealoc");
-  if (m_trackingArea != nullptr)
-  {
-    [self removeTrackingArea:m_trackingArea];
-    [m_trackingArea release], m_trackingArea = nullptr;
-  }
-
   [NSOpenGLContext clearCurrentContext];
   [m_glcontext clearDrawable];
   [m_glcontext release];
@@ -78,7 +67,6 @@
   static BOOL firstRender = YES;
   if (firstRender)
   {
-    //NSLog(@"OSXGLView drawRect setView");
     [m_glcontext setView:self];
     firstRender = NO;
     
@@ -87,48 +75,7 @@
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(0, 0, 0, 0);
 
-    //[m_glcontext update];
   }
-}
-
--(void)updateTrackingAreas
-{
-  //NSLog(@"updateTrackingAreas");
-  if (m_trackingArea != nullptr)
-  {
-    [self removeTrackingArea:m_trackingArea];
-    [m_trackingArea release];
-  }
-  
-  const int opts = (NSTrackingMouseEnteredAndExited |
-                    NSTrackingMouseMoved |
-                    NSTrackingActiveAlways);
-  m_trackingArea = [ [NSTrackingArea alloc] initWithRect:[self bounds]
-                                                 options:opts
-                                                   owner:self
-                                                userInfo:nil];
-  [self addTrackingArea:m_trackingArea];
-  [super updateTrackingAreas];
-}
-
-- (void)mouseEntered:(NSEvent*)theEvent
-{
-  //NSLog(@"mouseEntered");
-  Cocoa_HideMouse();
-  [self displayIfNeeded];
-}
-
-- (void)mouseMoved:(NSEvent*)theEvent
-{
-  //NSLog(@"mouseMoved");
-  [self displayIfNeeded];
-}
-
-- (void)mouseExited:(NSEvent*)theEvent
-{
-  //NSLog(@"mouseExited");
-  Cocoa_ShowMouse();
-  [self displayIfNeeded];
 }
 
 - (NSOpenGLContext *)getGLContext

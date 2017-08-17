@@ -75,7 +75,7 @@ public:
   void        StopLostDeviceTimer();
 
   
-  void         SetMovedToOtherScreen(bool moved) { m_movedToOtherScreen = moved; }
+  void         SetMovedToOtherScreen(bool moved);
   int          CheckDisplayChanging(uint32_t flags);
   void         SetFullscreenWillToggle(bool toggle){ m_fullscreenWillToggle = toggle; }
   bool         GetFullscreenWillToggle(){ return m_fullscreenWillToggle; }
@@ -86,6 +86,8 @@ public:
   float        CocoaToNativeFlip(float y);
 
 protected:
+  virtual std::unique_ptr<KODI::WINDOWING::IOSScreenSaver> GetOSScreenSaverImpl() override;
+
   void  HandlePossibleRefreshrateChange();
   void* CreateWindowedContext(void* shareCtx);
   void* CreateFullScreenContext(int screen_index, void* shareCtx);
@@ -101,11 +103,8 @@ protected:
   void                        *m_appWindow;
   void                        *m_glView;
   static void                 *m_lastOwnedContext;
-  bool                         m_obscured;
-  unsigned int                 m_obscured_timecheck;
   std::string                  m_name;
 
-  bool                         m_use_system_screensaver;
   bool                         m_movedToOtherScreen;
   bool                         m_fullscreenWillToggle;
   int                          m_lastDisplayNr;

@@ -26,9 +26,6 @@
 {
 }
 
-+(void) SetMenuBarVisible;
-+(void) SetMenuBarInvisible;
-
 -(id) initWithContentRect:(NSRect)box styleMask:(uint)style;
 -(void) dealloc;
 -(BOOL) windowShouldClose:(id) sender;
@@ -62,4 +59,5 @@
 -(void) scrollWheel:(NSEvent *) theEvent;
 
 - (BOOL) canBecomeKeyWindow;
+- (BOOL)  isFullScreen;
 @end
