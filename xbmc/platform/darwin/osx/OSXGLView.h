@@ -26,6 +26,7 @@
 {
   NSOpenGLContext     *m_glcontext;
   NSOpenGLPixelFormat *m_pixFmt;
+  NSTrackingArea      *m_trackingArea;
 }
 
 - (id)initWithFrame: (NSRect)frameRect;

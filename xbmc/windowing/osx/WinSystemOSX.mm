@@ -307,22 +307,21 @@ std::string CWinSystemOSX::GetClipboardText(void)
   return utf8_text;
 }
 
-float CWinSystemOSX::CocoaToNativeFlip(float y)
+void CWinSystemOSX::ConvertLocationFromScreen(CGPoint *point)
 {
-  // OpenGL specifies that the default origin is at bottom-left.
-  // Cocoa specifies that the default origin is at bottom-left.
-  // Direct3D specifies that the default origin is at top-left.
-  // SDL specifies that the default origin is at top-left.
-  // WTF ?
-
-  // TODO hook height and width up to resize events of window and cache them as member
   if (m_appWindow)
   {
+    NSView *view = (NSView *)m_glView;
     NSWindow *win = (NSWindow *)m_appWindow;
+    //NSRect rect = [win convertRectFromScreen:NSMakeRect(point->x, point->y, 0, 0)];
+    //NSPoint temp = rect.origin;
+
+    //*point = [view convertPoint:temp fromView:nil];
+
+    //*point = [win convertFromScreen:*point];
     NSRect frame = [[win contentView] frame];
-    y = frame.size.height - y;
+    point->y = frame.size.height - point->y;
   }
-  return y;
 }
 
 std::unique_ptr<IOSScreenSaver> CWinSystemOSX::GetOSScreenSaverImpl()

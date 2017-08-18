@@ -28,6 +28,7 @@
 typedef struct _CGLContextObject *CGLContextObj;
 class COSXScreenManager;
 class IDispResource;
+struct CGPoint;
 
 class CWinSystemOSX : public CWinSystemBase
 {
@@ -73,7 +74,8 @@ public:
   CGLContextObj  GetCGLContextObj();
   
   virtual std::string  GetClipboardText(void) override;
-  float        CocoaToNativeFlip(float y);
+  void ConvertLocationFromScreen(CGPoint *point);
+
   
 protected:
   virtual std::unique_ptr<KODI::WINDOWING::IOSScreenSaver> GetOSScreenSaverImpl() override;

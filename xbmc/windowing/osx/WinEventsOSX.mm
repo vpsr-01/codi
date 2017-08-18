@@ -305,8 +305,9 @@ NSEvent* InputEventHandler(NSEvent *nsevent)
   if (location.x < 0 || location.y < 0)
     return nsevent;
 
-  // cocoa world is upside down ...
-  location.y = g_Windowing.CocoaToNativeFlip(location.y);
+  // ensure the location is relative to our view
+  // and also cocoa world is upside down ...
+  g_Windowing.ConvertLocationFromScreen(&location);
   
   UniChar unicodeString[10];
   UniCharCount actualStringLength = 10;
@@ -580,7 +581,7 @@ void CWinEventsOSXImp::enableInputEvents()
   disableInputEvents();// allow only one registration at a time
 
   // Create an event tap. We are interested in mouse and keyboard events.
-  eventMask = NSLeftMouseDownMask |
+  /*eventMask = NSLeftMouseDownMask |
               NSLeftMouseUpMask |
               NSRightMouseDownMask |
               NSRightMouseUpMask |
@@ -592,7 +593,10 @@ void CWinEventsOSXImp::enableInputEvents()
               NSMouseMovedMask |
               NSScrollWheelMask |
               NSKeyDownMask |
-              NSKeyUpMask;
+              NSKeyUpMask;*/
+
+   eventMask = NSKeyDownMask |
+               NSKeyUpMask;
 
   mLocalMonitorId = [NSEvent addLocalMonitorForEventsMatchingMask:eventMask handler:^(NSEvent *event){
     return InputEventHandler(event);
