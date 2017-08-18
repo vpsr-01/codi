@@ -2,8 +2,7 @@ if(NOT CMAKE_TOOLCHAIN_FILE)
   message(FATAL_ERROR "CMAKE_TOOLCHAIN_FILE required for osx. See ${CMAKE_SOURCE_DIR}/cmake/README.md")
 endif()
 
-set(CORE_MAIN_SOURCE ${CMAKE_SOURCE_DIR}/xbmc/platform/posix/main.cpp
-                     ${CMAKE_SOURCE_DIR}/xbmc/platform/darwin/osx/MainApplication.mm
+set(CORE_MAIN_SOURCE ${CMAKE_SOURCE_DIR}/xbmc/platform/darwin/osx/MainApplication.mm
                      ${CMAKE_SOURCE_DIR}/xbmc/platform/darwin/osx/MainApplication.h)
 
 set(ARCH_DEFINES -D_LINUX -DTARGET_POSIX -DTARGET_DARWIN -DTARGET_DARWIN_OSX)
