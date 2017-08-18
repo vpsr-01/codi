@@ -78,7 +78,6 @@
     if ([context view])
     {
       NSPoint window_origin = [[[context view] window] frame].origin;
-      window_origin.y = g_Windowing.CocoaToNativeFlip(window_origin.y);
       XBMC_Event newEvent;
       memset(&newEvent, 0, sizeof(newEvent));
       newEvent.type = XBMC_VIDEOMOVE;
@@ -116,7 +115,7 @@
 -(void)windowDidEndLiveResize:(NSNotification *)aNotification
 {
   //NSLog(@"windowDidEndLiveResize");
-  NSRect rect = [self frame]; //[self contentRectForFrameRect:[self frame]];
+  NSRect rect = [self contentRectForFrameRect:[self frame]];
 
   if(!g_Windowing.IsFullScreen())
   {
