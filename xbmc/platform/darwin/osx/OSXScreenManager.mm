@@ -634,6 +634,7 @@ void COSXScreenManager::SetMovedToOtherScreen(bool moved)
   m_movedToOtherScreen = moved;
   if (moved)
   {
+    m_lastDisplayNr = GetCurrentScreen();
     HandlePossibleRefreshrateChange();
   }
 }
