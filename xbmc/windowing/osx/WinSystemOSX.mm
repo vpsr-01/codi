@@ -519,42 +519,50 @@ bool CWinSystemOSX::SetFullScreen(bool fullScreen, RESOLUTION_INFO& res, bool bl
 
   OSXGLWindow *window = (OSXGLWindow *)m_appWindow;
 
+  bool screenChanged = m_pScreenManager->SetLastDisplayNr(res.iScreen);
+  bool fullScreen2FullScreen = m_bFullScreen && fullScreen && screenChanged;
   m_nWidth      = res.iWidth;
   m_nHeight     = res.iHeight;
   m_bFullScreen = fullScreen;
-  m_pScreenManager->SetLastDisplayNr(res.iScreen);
+
 
   [window setAllowsConcurrentViewDrawing:NO];
   
   SetFullscreenWillToggle(m_bFullScreen != [window isFullScreen]);
 
-  if (m_bFullScreen)
+  // toggle cocoa fullscreen mode
+  // this should handle everything related to
+  // window decorations and stuff like that.
+  // this needs to be called before ResizeWindow
+  // else we might not be able to get the full window size when
+  // in fullscreen mode - but only the full height minus osx dock height.
+  if (GetFullscreenWillToggle() || fullScreen2FullScreen)
   {
-    
-    // toggle cocoa fullscreen mode
-    // this should handle everything related to
-    // window decorations and stuff like that.
-    if (GetFullscreenWillToggle())
+    // go to windowed mode first and move to the other screen
+    // before toggle fullscreen again.
+    if (fullScreen2FullScreen && [window isFullScreen])
     {
+      NSScreen* pScreen = [[NSScreen screens] objectAtIndex:res.iScreen];
       [window performSelectorOnMainThread:@selector(toggleFullScreen:) withObject:nil waitUntilDone:YES];
+      NSRect rectOnNewScreen = [window constrainFrameRect:[window frame] toScreen:pScreen];
+      ResizeWindow(rectOnNewScreen.size.width, rectOnNewScreen.size.width, rectOnNewScreen.origin.x, rectOnNewScreen.origin.y);
     }
     
+    [window performSelectorOnMainThread:@selector(toggleFullScreen:) withObject:nil waitUntilDone:YES];
+  }
+  
+  if (m_bFullScreen)
+  {
     // switch videomode
     m_pScreenManager->SwitchToVideoMode(res.iWidth, res.iHeight, res.fRefreshRate, res.iScreen);
     NSScreen* pScreen = [[NSScreen screens] objectAtIndex:res.iScreen];
     NSRect    screenRect = [pScreen frame];
+    // ensure we use the screen rect origin here - because we might want to display on
+    // a different monitor (which has the monitor offset in x and y origin ...)
     ResizeWindow(m_nWidth, m_nHeight, screenRect.origin.x, screenRect.origin.y);
   }
   else
   {
-    // toggle cocoa fullscreen mode
-    // this should handle everything related to
-    // window decorations and stuff like that.
-    if (GetFullscreenWillToggle())
-    {
-      [window performSelectorOnMainThread:@selector(toggleFullScreen:) withObject:nil waitUntilDone:YES];
-    }
-    
     // Windowed Mode
     ResizeWindow(m_nWidth, m_nHeight, m_lastX, m_lastY);
   }

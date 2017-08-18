@@ -68,7 +68,8 @@ public:
   void  GetScreenResolution(int* w, int* h, double* fps, int screenIdx);
   void  EnableVSync(bool enable);
   void  HandleDelayedDisplayReset();
-  void  SetLastDisplayNr(int lastDisplayNr);
+  // returns true if the display nummer differs from the last display number
+  bool  SetLastDisplayNr(int lastDisplayNr);
   bool  SwitchToVideoMode(int width, int height, double refreshrate, int screenIdx);
 
   

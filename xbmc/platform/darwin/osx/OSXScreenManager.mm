@@ -463,9 +463,11 @@ void COSXScreenManager::HandleDelayedDisplayReset()
   }
 }
 
-void COSXScreenManager::SetLastDisplayNr(int lastDisplayNr)
+bool COSXScreenManager::SetLastDisplayNr(int lastDisplayNr)
 {
+  bool displayNumberChanged = m_lastDisplayNr != lastDisplayNr;
   m_lastDisplayNr = lastDisplayNr;
+  return displayNumberChanged;
 }
 
 bool COSXScreenManager::SwitchToVideoMode(int width, int height, double refreshrate, int screenIdx)
