@@ -4462,16 +4462,6 @@ void CApplication::ProcessSlow()
 {
   g_powerManager.ProcessEvents();
 
-#if defined(TARGET_DARWIN_OSX)
-  // There is an issue on OS X that several system services ask the cursor to become visible
-  // during their startup routines.  Given that we can't control this, we hack it in by
-  // forcing the
-  if (g_Windowing.IsFullScreen())
-  { // SDL thinks it's hidden
-    Cocoa_HideMouse();
-  }
-#endif
-
   // Temporarily pause pausable jobs when viewing video/picture
   int currentWindow = g_windowManager.GetActiveWindow();
   if (CurrentFileItem().IsVideo() ||
