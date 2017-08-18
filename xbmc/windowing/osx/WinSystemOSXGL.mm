@@ -38,11 +38,7 @@ void CWinSystemOSXGL::PresentRenderImpl(bool rendered)
   if (rendered)
     FlushBuffer();
 
-  if (m_delayDispReset && m_dispResetTimer.IsTimePast())
-  {
-    m_delayDispReset = false;
-    AnnounceOnResetDevice();
-  }
+  HandleDelayedDisplayReset();
 }
 
 void CWinSystemOSXGL::SetVSyncImpl(bool enable)
