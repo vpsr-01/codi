@@ -25,6 +25,7 @@
 #include "FileItem.h"
 #include "PlayListPlayer.h"
 #include "utils/log.h"
+#include "utils/SystemInfo.h"
 #include "platform/xbmc.h"
 #include "platform/XbmcContext.h"
 #include <sys/resource.h>
@@ -80,18 +81,10 @@ static BOOL   gFinderLaunch;
 static BOOL   gCalledAppMainline = FALSE;
 
 static NSString *getApplicationName(void)
-{
-  NSDictionary *dict;
-  NSString *appName = 0;
-
-  // Determine the application name
-  dict = (NSDictionary *)CFBundleGetInfoDictionary(CFBundleGetMainBundle());
-  if (dict)
-    appName = [dict objectForKey: @"CFBundleName"];
-
-  if (![appName length])
-    appName = [[NSProcessInfo processInfo] processName];
-
+{  
+  const char* appNameStr = CSysInfo::GetAppName().c_str();
+  NSString *appName = [NSString stringWithUTF8String:appNameStr];
+  
   return appName;
 }
 
