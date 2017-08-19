@@ -129,7 +129,11 @@
 
   // send a message so that videoresolution (and refreshrate) is changed
   if (rect.size.width != 0 && rect.size.height != 0)
-    KODI::MESSAGING::CApplicationMessenger::GetInstance().PostMsg(TMSG_VIDEORESIZE, rect.size.width, rect.size.height);
+  {
+    XBMC_Event msg{XBMC_VIDEORESIZE};
+    msg.resize = {static_cast<int>(rect.size.width), static_cast<int>(rect.size.height)};
+    CWinEvents::MessagePush(&msg);
+  }
 
   g_windowManager.MarkDirty();
 }

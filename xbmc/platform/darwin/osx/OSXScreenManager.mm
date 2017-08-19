@@ -654,7 +654,9 @@ void COSXScreenManager::HandlePossibleRefreshrateChange()
     if (m_pAppWindow)
     {
       NSRect frame = [[m_pAppWindow contentView] frame];
-      KODI::MESSAGING::CApplicationMessenger::GetInstance().PostMsg(TMSG_VIDEORESIZE, frame.size.width, frame.size.height);
+      XBMC_Event msg{XBMC_VIDEORESIZE};
+      msg.resize = {static_cast<int>(frame.size.width), static_cast<int>(frame.size.height)};
+      CWinEvents::MessagePush(&msg);
     }
   }
 }

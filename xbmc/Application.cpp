@@ -2467,18 +2467,6 @@ void CApplication::OnApplicationMessage(ThreadMessage* pMsg)
       SwitchToFullScreen(true);
     break;
 
-  case TMSG_VIDEORESIZE:
-  {
-    XBMC_Event newEvent;
-    memset(&newEvent, 0, sizeof(newEvent));
-    newEvent.type = XBMC_VIDEORESIZE;
-    newEvent.resize.w = pMsg->param1;
-    newEvent.resize.h = pMsg->param2;
-    OnEvent(newEvent);
-    g_windowManager.MarkDirty();
-  }
-    break;
-
   case TMSG_SETVIDEORESOLUTION:
     g_graphicsContext.SetVideoResolution(static_cast<RESOLUTION>(pMsg->param1), pMsg->param2 == 1);
     break;
