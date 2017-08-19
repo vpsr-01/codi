@@ -456,9 +456,7 @@ bool CWinSystemOSX::CreateNewWindow(const std::string& name, bool fullScreen, RE
 
 // this is either called from SetFullScreen (so internally) or
 // from windowDidEndLiveResize as a result of
-// TMSG_VIDEORESIZE (externally) - it makes it hard to get
-// right due to miss understanding the whole nswindow/nsview
-// coordinate system
+// XBMC_VIDEORESIZE event (externally)
 bool CWinSystemOSX::ResizeWindow(int newWidth, int newHeight, int newLeft, int newTop)
 {
   //printf("CWinSystemOSX::ResizeWindow\n");

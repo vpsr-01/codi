@@ -22,7 +22,6 @@
 #include "ServiceBroker.h"
 #include "guilib/DispResource.h"
 #include "guilib/GraphicContext.h"
-#include "messaging/ApplicationMessenger.h"
 #include "platform/darwin/osx/CocoaInterface.h"
 #include "settings/Settings.h"
 #include "settings/DisplaySettings.h"

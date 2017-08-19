@@ -346,13 +346,20 @@ static void setupApplicationMenu(void)
   [[NSNotificationCenter defaultCenter] removeObserver:self];
   
   // Post an quit event to the application thread.
-  KODI::MESSAGING::CApplicationMessenger::GetInstance().PostMsg(TMSG_QUIT);
+  XBMC_Event newEvent;
+  memset(&newEvent, 0, sizeof(newEvent));
+  newEvent.type = XBMC_QUIT;
+  CWinEvents::MessagePush(&newEvent);
 }
 
 - (void)fullScreenToggle:(id)sender
 {
   // Post an toggle full-screen event to the application thread.
-  KODI::MESSAGING::CApplicationMessenger::GetInstance().PostMsg(TMSG_TOGGLEFULLSCREEN);
+  XBMC_Event newEvent;
+  memset(&newEvent, 0, sizeof(newEvent));
+  newEvent.type = XBMC_USEREVENT;
+  newEvent.user.code = TMSG_TOGGLEFULLSCREEN;
+  CWinEvents::MessagePush(&newEvent);
 }
 
 - (void)floatOnTopToggle:(id)sender

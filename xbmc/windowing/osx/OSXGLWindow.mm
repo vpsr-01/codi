@@ -57,8 +57,12 @@
   //NSLog(@"windowShouldClose");
   
   if (!g_application.m_bStop)
-    KODI::MESSAGING::CApplicationMessenger::GetInstance().PostMsg(TMSG_QUIT);
-  
+  {
+    XBMC_Event newEvent;
+    memset(&newEvent, 0, sizeof(newEvent));
+    newEvent.type = XBMC_QUIT;
+    CWinEvents::MessagePush(&newEvent);
+  }
   return NO;
 }
 
@@ -150,7 +154,12 @@
     // flag will be reset in SetFullscreen once its
     // called from XBMCs gui thread
     g_Windowing.SetFullscreenWillToggle(true);
-    KODI::MESSAGING::CApplicationMessenger::GetInstance().PostMsg(TMSG_TOGGLEFULLSCREEN);
+    
+    XBMC_Event newEvent;
+    memset(&newEvent, 0, sizeof(newEvent));
+    newEvent.type = XBMC_USEREVENT;
+    newEvent.user.code = TMSG_TOGGLEFULLSCREEN;
+    CWinEvents::MessagePush(&newEvent);
   }
   else
   {
@@ -171,8 +180,11 @@
     // flag will be reset in SetFullscreen once its
     // called from XBMCs gui thread
     g_Windowing.SetFullscreenWillToggle(true);
-    KODI::MESSAGING::CApplicationMessenger::GetInstance().PostMsg(TMSG_TOGGLEFULLSCREEN);
-    
+    XBMC_Event newEvent;
+    memset(&newEvent, 0, sizeof(newEvent));
+    newEvent.type = XBMC_USEREVENT;
+    newEvent.user.code = TMSG_TOGGLEFULLSCREEN;
+    CWinEvents::MessagePush(&newEvent);
   }
   else
   {
