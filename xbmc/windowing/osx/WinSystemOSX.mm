@@ -411,7 +411,7 @@ bool CWinSystemOSX::CreateNewWindow(const std::string& name, bool fullScreen, RE
     m_pScreenManager->RegisterWindow(appWindow);
   }
 
-  [(NSWindow*)m_appWindow makeKeyAndOrderFront:nil];
+  [(NSWindow*)m_appWindow performSelectorOnMainThread:@selector(makeKeyAndOrderFront:) withObject:nil waitUntilDone:YES];
 
   //NSEnableScreenUpdates();
 
@@ -540,7 +540,7 @@ bool CWinSystemOSX::SetFullScreen(bool fullScreen, RESOLUTION_INFO& res, bool bl
     
     [window performSelectorOnMainThread:@selector(toggleFullScreen:) withObject:nil waitUntilDone:YES];
   }
-  
+
   if (m_bFullScreen)
   {
     // switch videomode
