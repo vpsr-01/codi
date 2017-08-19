@@ -19,7 +19,6 @@
  */
 
 #include "Application.h"
-#include "guilib/GUIWindowManager.h"
 #include "messaging/ApplicationMessenger.h"
 #include "settings/DisplaySettings.h"
 #include "platform/darwin/osx/CocoaInterface.h"
@@ -134,8 +133,6 @@
     msg.resize = {static_cast<int>(rect.size.width), static_cast<int>(rect.size.height)};
     CWinEvents::MessagePush(&msg);
   }
-
-  g_windowManager.MarkDirty();
 }
 
 -(void)windowDidEnterFullScreen: (NSNotification*)pNotification
