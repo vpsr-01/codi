@@ -31,11 +31,12 @@
 #include "cores/VideoPlayer/VideoRenderers/HwDecRender/RendererVTBGL.h"
 #include "utils/log.h"
 #include "platform/darwin/osx/CocoaInterface.h"
-#include "platform/darwin/osx/OSXScreenManager.h"
 #include "platform/darwin/osx/OSXTextInputResponder.h"
-#include "platform/darwin/osx/OSXGLView.h"
-#include "platform/darwin/osx/OSXGLWindow.h"
 #include "OSScreenSaverOSX.h"
+#include "OSXGLView.h"
+#include "OSXGLWindow.h"
+#include "OSXScreenManager.h"
+
 
 using namespace KODI;
 using namespace KODI::WINDOWING;
