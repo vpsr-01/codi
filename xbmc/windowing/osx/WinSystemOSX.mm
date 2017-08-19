@@ -312,14 +312,7 @@ void CWinSystemOSX::ConvertLocationFromScreen(CGPoint *point)
 {
   if (m_appWindow)
   {
-    NSView *view = (NSView *)m_glView;
     NSWindow *win = (NSWindow *)m_appWindow;
-    //NSRect rect = [win convertRectFromScreen:NSMakeRect(point->x, point->y, 0, 0)];
-    //NSPoint temp = rect.origin;
-
-    //*point = [view convertPoint:temp fromView:nil];
-
-    //*point = [win convertFromScreen:*point];
     NSRect frame = [[win contentView] frame];
     point->y = frame.size.height - point->y;
   }
@@ -490,7 +483,6 @@ bool CWinSystemOSX::ResizeWindow(int newWidth, int newHeight, int newLeft, int n
   NSRect myNewContentFrame = NSMakeRect(newLeft, newTop, newWidth, newHeight);
   NSRect myNewWindowRect = [window frameRectForContentRect:myNewContentFrame];
 
-  //[window setContentSize:myNewContentFrame.size];
   [window setFrame:myNewWindowRect display:TRUE];
   [view setFrameOrigin:NSMakePoint(0, 0)];
   [view setFrameSize:myNewContentFrame.size];
