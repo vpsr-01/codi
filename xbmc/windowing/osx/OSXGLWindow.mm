@@ -19,7 +19,6 @@
  */
 
 #include "Application.h"
-#include "messaging/ApplicationMessenger.h"
 #include "platform/darwin/osx/CocoaInterface.h"
 #include "platform/darwin/DarwinUtils.h"
 #include "windowing/osx/WinEventsOSX.h"
@@ -146,8 +145,7 @@
     
     XBMC_Event newEvent;
     memset(&newEvent, 0, sizeof(newEvent));
-    newEvent.type = XBMC_USEREVENT;
-    newEvent.user.code = TMSG_TOGGLEFULLSCREEN;
+    newEvent.type = XBMC_TOGGLEFULLSCREEN;
     CWinEvents::MessagePush(&newEvent);
   }
   else
@@ -171,8 +169,7 @@
     g_Windowing.SetFullscreenWillToggle(true);
     XBMC_Event newEvent;
     memset(&newEvent, 0, sizeof(newEvent));
-    newEvent.type = XBMC_USEREVENT;
-    newEvent.user.code = TMSG_TOGGLEFULLSCREEN;
+    newEvent.type = XBMC_TOGGLEFULLSCREEN;
     CWinEvents::MessagePush(&newEvent);
   }
   else
