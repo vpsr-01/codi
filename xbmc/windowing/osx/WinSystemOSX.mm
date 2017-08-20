@@ -478,24 +478,16 @@ bool CWinSystemOSX::ResizeWindow(int newWidth, int newHeight, int newLeft, int n
   }
 
   NSWindow *window = (NSWindow*)m_appWindow;
-  NSRect myNewContentFrame = NSMakeRect(newLeft, newTop, newWidth, newHeight);
-  NSRect myNewWindowRect = [window frameRectForContentRect:myNewContentFrame];
+//  NSRect myNewContentFrame = NSMakeRect(newLeft, newTop, newWidth, newHeight);
+//  NSRect myNewWindowRect = [window frameRectForContentRect:myNewContentFrame];
+//
+//  NSArray *params = [NSArray arrayWithObjects:
+//                     [NSValue valueWithRect:myNewWindowRect],
+//                     [NSNumber numberWithBool:TRUE],
+//                     nil];
+//
+//  [window performSelectorOnMainThread:@selector(setFrame:) withObject:params waitUntilDone:YES];
 
-  NSArray *params = [NSArray arrayWithObjects:
-                     [NSValue valueWithRect:myNewWindowRect],
-                     nil];
-
-  [(NSWindow*)m_appWindow performSelectorOnMainThread:@selector(setFrame:) withObject:params waitUntilDone:YES];
-
-  FinishWindowResize(newWidth, newHeight);
-
-  return true;
-
-}
-
-void CWinSystemOSX::FinishWindowResize(int newWidth, int newHeight)
-{
-  NSWindow *window = (NSWindow*)m_appWindow;
   OSXGLView *view = [window contentView];
   NSOpenGLContext *context = [view getGLContext];
 
@@ -503,6 +495,14 @@ void CWinSystemOSX::FinishWindowResize(int newWidth, int newHeight)
 
   m_nWidth = newWidth;
   m_nHeight = newHeight;
+
+  return true;
+
+}
+
+void CWinSystemOSX::FinishWindowResize(int newWidth, int newHeight)
+{
+  ResizeWindow(newWidth, newHeight, -1 ,-1);
 }
 
 // this not only toggles full screen - it also
