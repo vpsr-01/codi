@@ -20,7 +20,6 @@
 
 #include "Application.h"
 #include "messaging/ApplicationMessenger.h"
-#include "settings/DisplaySettings.h"
 #include "platform/darwin/osx/CocoaInterface.h"
 #include "platform/darwin/DarwinUtils.h"
 #include "windowing/osx/WinEventsOSX.h"
@@ -119,16 +118,6 @@
 {
   //NSLog(@"windowDidEndLiveResize");
   NSRect rect = [self contentRectForFrameRect:[self frame]];
-
-  if(!g_Windowing.IsFullScreen())
-  {
-    int windowModeWidth = CDisplaySettings::GetInstance().GetResolutionInfo(RES_WINDOW).iWidth;
-    int windowModeHeight = CDisplaySettings::GetInstance().GetResolutionInfo(RES_WINDOW).iHeight;
-
-    if(((int)rect.size.width == windowModeWidth) &&
-       ((int)rect.size.height == windowModeHeight))
-      return;
-  }
 
   // send a message so that videoresolution (and refreshrate) is changed
   if (rect.size.width != 0 && rect.size.height != 0)
