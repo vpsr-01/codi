@@ -46,6 +46,7 @@ typedef enum {
        XBMC_TOUCH,
        XBMC_SETFOCUS,
        XBMC_TOGGLEFULLSCREEN,   /* Toggle between fullscreen and windowed*/
+       XBMC_MINIMIZE,           /* Minimize the application window */
        XBMC_USEREVENT,
 
        XBMC_MAXEVENT = 256      /* XBMC_EventType is represented as uchar */
