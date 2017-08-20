@@ -372,19 +372,16 @@ bool CWinSystemOSX::CreateNewWindow(const std::string& name, bool fullScreen, RE
   m_nHeight     = res.iHeight;
   m_bFullScreen = fullScreen;
 
-  //NSDisableScreenUpdates();
-
   // for native fullscreen we always want to set the same windowed flags
   NSUInteger windowStyleMask;
 
   windowStyleMask = NSTitledWindowMask|NSResizableWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask;
+  NSString *title = [NSString stringWithUTF8String:name.c_str()];
 
   if (m_appWindow == NULL)
   {
     NSWindow *appWindow = [[OSXGLWindow alloc] initWithContentRect:NSMakeRect(0, 0, m_nWidth, m_nHeight) styleMask:windowStyleMask];
-    NSString *title = [NSString stringWithUTF8String:name.c_str()];
     [appWindow setBackgroundColor:[NSColor blackColor]];
-    [appWindow setTitle:title];
     [appWindow setOneShot:NO];
     [appWindow setMinSize:NSMakeSize(500, 300)];
 
@@ -409,7 +406,8 @@ bool CWinSystemOSX::CreateNewWindow(const std::string& name, bool fullScreen, RE
     m_bWindowCreated = true;
     m_pScreenManager->RegisterWindow(appWindow);
   }
-
+  
+  [(NSWindow*)m_appWindow performSelectorOnMainThread:@selector(setTitle:) withObject:title waitUntilDone:YES];
   [(NSWindow*)m_appWindow performSelectorOnMainThread:@selector(makeKeyAndOrderFront:) withObject:nil waitUntilDone:YES];
 
   //NSEnableScreenUpdates();
