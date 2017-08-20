@@ -92,7 +92,7 @@
 
 - (void)windowDidResize:(NSNotification *)aNotification
 {
-  NSLog(@"windowDidResize");
+  //NSLog(@"windowDidResize");
 }
 
 -(void)windowDidChangeScreen:(NSNotification *)notification
