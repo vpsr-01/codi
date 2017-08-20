@@ -45,6 +45,7 @@ typedef enum {
        XBMC_APPCOMMAND,         /* Media commands, such as WM_APPCOMMAND on Windows for media keys. */
        XBMC_TOUCH,
        XBMC_SETFOCUS,
+       XBMC_TOGGLEFULLSCREEN,   /* Toggle between fullscreen and windowed*/
        XBMC_USEREVENT,
 
        XBMC_MAXEVENT = 256      /* XBMC_EventType is represented as uchar */
