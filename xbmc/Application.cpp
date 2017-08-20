@@ -329,9 +329,6 @@ bool CApplication::OnEvent(XBMC_Event& newEvent)
     case XBMC_MODECHANGE:
       g_graphicsContext.ApplyModeChange(newEvent.mode.res);
       break;
-    case XBMC_USEREVENT:
-      CApplicationMessenger::GetInstance().PostMsg(static_cast<uint32_t>(newEvent.user.code));
-      break;
     case XBMC_APPCOMMAND:
       return g_application.OnAppCommand(newEvent.appcommand.action);
     case XBMC_SETFOCUS:
