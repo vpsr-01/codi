@@ -388,6 +388,7 @@ bool CWinSystemOSX::CreateNewWindow(const std::string& name, bool fullScreen, RE
     [appWindow setBackgroundColor:[NSColor blackColor]];
     [appWindow setTitle:title];
     [appWindow setOneShot:NO];
+    [appWindow setMinSize:NSMakeSize(500, 300)];
 
     NSWindowCollectionBehavior behavior = [appWindow collectionBehavior];
     behavior |= NSWindowCollectionBehaviorFullScreenPrimary;
@@ -483,9 +484,11 @@ bool CWinSystemOSX::ResizeWindow(int newWidth, int newHeight, int newLeft, int n
   NSRect myNewContentFrame = NSMakeRect(newLeft, newTop, newWidth, newHeight);
   NSRect myNewWindowRect = [window frameRectForContentRect:myNewContentFrame];
 
-  [window setFrame:myNewWindowRect display:TRUE];
-  [view setFrameOrigin:NSMakePoint(0, 0)];
-  [view setFrameSize:myNewContentFrame.size];
+  NSArray *params = [NSArray arrayWithObjects:
+                     [NSValue valueWithRect:myNewWindowRect],
+                     nil];
+
+  [(NSWindow*)m_appWindow performSelectorOnMainThread:@selector(setFrame:) withObject:params waitUntilDone:YES];
   [context update];
 
   m_nWidth = newWidth;
