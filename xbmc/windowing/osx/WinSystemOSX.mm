@@ -18,8 +18,6 @@
  *
  */
 
-#if defined(TARGET_DARWIN_OSX)
-
 #include "WinSystemOSX.h"
 
 #include "Application.h"
@@ -449,23 +447,11 @@ bool CWinSystemOSX::CreateNewWindow(const std::string& name, bool fullScreen, RE
 }
 
 // this is either called from SetFullScreen (so internally) or
-// from windowDidEndLiveResize as a result of
-// XBMC_VIDEORESIZE event (externally)
 bool CWinSystemOSX::ResizeWindow(int newWidth, int newHeight, int newLeft, int newTop)
 {
   //printf("CWinSystemOSX::ResizeWindow\n");
   if (!m_appWindow)
     return false;
-
-  if (newLeft < 0)
-  {
-    newLeft = m_lastX;
-  }
-
-  if (newTop < 0)
-  {
-    newTop = m_lastY;
-  }
 
   if (newWidth < 0)
   {
@@ -478,31 +464,16 @@ bool CWinSystemOSX::ResizeWindow(int newWidth, int newHeight, int newLeft, int n
   }
 
   NSWindow *window = (NSWindow*)m_appWindow;
-//  NSRect myNewContentFrame = NSMakeRect(newLeft, newTop, newWidth, newHeight);
-//  NSRect myNewWindowRect = [window frameRectForContentRect:myNewContentFrame];
-//
-//  NSArray *params = [NSArray arrayWithObjects:
-//                     [NSValue valueWithRect:myNewWindowRect],
-//                     [NSNumber numberWithBool:TRUE],
-//                     nil];
-//
-//  [window performSelectorOnMainThread:@selector(setFrame:) withObject:params waitUntilDone:YES];
 
-  OSXGLView *view = [window contentView];
-  NSOpenGLContext *context = [view getGLContext];
+  NSRect pos = [window frame];
+  newLeft = pos.origin.x;
+  newTop = pos.origin.y;
 
-  [context performSelectorOnMainThread:@selector(update) withObject:nil waitUntilDone:YES];
-
-  m_nWidth = newWidth;
-  m_nHeight = newHeight;
+  NSRect myNewContentFrame = NSMakeRect(newLeft, newTop, newWidth, newHeight);
+  NSRect myNewWindowRect = [window frameRectForContentRect:myNewContentFrame];
+  [window setFrame:myNewWindowRect display:TRUE];
 
   return true;
-
-}
-
-void CWinSystemOSX::FinishWindowResize(int newWidth, int newHeight)
-{
-  ResizeWindow(newWidth, newHeight, -1 ,-1);
 }
 
 // this not only toggles full screen - it also
@@ -579,4 +550,3 @@ void CWinSystemOSX::OnMove(int x, int y)
   m_lastY      = y;
 }
 
-#endif

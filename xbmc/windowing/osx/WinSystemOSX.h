@@ -20,8 +20,6 @@
  *
  */
 
-#if defined(TARGET_DARWIN_OSX)
-
 #include "windowing/WinSystem.h"
 #include "threads/CriticalSection.h"
 
@@ -56,7 +54,6 @@ public:
   virtual bool DestroyWindow() override;
   bool         DestroyWindowInternal();
   virtual bool ResizeWindow(int newWidth, int newHeight, int newLeft, int newTop) override;
-  virtual void FinishWindowResize(int newWidth, int newHeight) override;
   virtual bool SetFullScreen(bool fullScreen, RESOLUTION_INFO& res, bool blankOtherDisplays) override;
   virtual void NotifyAppFocusChange(bool bGaining) override;
   virtual void ShowOSMouse(bool show) override;
@@ -94,5 +91,3 @@ protected:
   CCriticalSection             m_critSection;
   COSXScreenManager           *m_pScreenManager;
 };
-
-#endif
