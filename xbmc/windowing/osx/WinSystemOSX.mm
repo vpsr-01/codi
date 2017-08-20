@@ -455,12 +455,12 @@ bool CWinSystemOSX::ResizeWindow(int newWidth, int newHeight, int newLeft, int n
 
   if (newWidth < 0)
   {
-    newWidth = 800;
+    newWidth = [(NSWindow *)m_appWindow minSize].width;
   }
 
   if (newHeight < 0)
   {
-    newHeight = 400;
+    newHeight = [(NSWindow *)m_appWindow minSize].height;
   }
 
   NSWindow *window = (NSWindow*)m_appWindow;
