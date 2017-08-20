@@ -34,6 +34,7 @@
 #include "OSXGLView.h"
 #include "OSXGLWindow.h"
 #include "OSXScreenManager.h"
+#include "VideoSyncOsx.h"
 
 
 using namespace KODI;
@@ -562,3 +563,8 @@ void CWinSystemOSX::OnMove(int x, int y)
   m_lastY      = y;
 }
 
+std::unique_ptr<CVideoSync> CWinSystemOSX::GetVideoSync(void *clock)
+{
+  std::unique_ptr<CVideoSync> pVSync(new CVideoSyncOsx(clock));
+  return pVSync;
+}

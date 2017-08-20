@@ -62,6 +62,7 @@ public:
   virtual bool Hide() override;
   virtual bool Show(bool raise = true) override;
   virtual void OnMove(int x, int y) override;
+  virtual std::unique_ptr<CVideoSync> GetVideoSync(void *clock) override;
 
   virtual void EnableTextInput(bool bEnable) override;
   virtual bool IsTextInputEnabled() override;
