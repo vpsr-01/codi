@@ -328,8 +328,7 @@ static void setupApplicationMenu(void)
   // Post an toggle full-screen event to the application thread.
   XBMC_Event newEvent;
   memset(&newEvent, 0, sizeof(newEvent));
-  newEvent.type = XBMC_USEREVENT;
-  newEvent.user.code = TMSG_TOGGLEFULLSCREEN;
+  newEvent.type = XBMC_TOGGLEFULLSCREEN;
   CWinEvents::MessagePush(&newEvent);
 }
 
