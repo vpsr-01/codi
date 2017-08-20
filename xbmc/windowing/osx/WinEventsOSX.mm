@@ -47,13 +47,22 @@ bool ProcessOSXShortcuts(XBMC_Event& event)
     {
       case XBMCK_q:  // CMD-q to quit
         if (!g_application.m_bStop)
-          KODI::MESSAGING::CApplicationMessenger::GetInstance().PostMsg(TMSG_QUIT);
+        {
+          XBMC_Event newEvent;
+          memset(&newEvent, 0, sizeof(newEvent));
+          newEvent.type = XBMC_QUIT;
+          CWinEvents::MessagePush(&newEvent);
+        }
         return true;
         
       case XBMCK_f: // CMD-f to toggle fullscreen
-        KODI::MESSAGING::CApplicationMessenger::GetInstance().PostMsg(TMSG_TOGGLEFULLSCREEN);
+      {
+        XBMC_Event newEvent;
+        memset(&newEvent, 0, sizeof(newEvent));
+        newEvent.type = XBMC_TOGGLEFULLSCREEN;
+        CWinEvents::MessagePush(&newEvent);
         return true;
-        
+      }
       case XBMCK_s: // CMD-s to take a screenshot
       {
         CAction *action = new CAction(ACTION_TAKE_SCREENSHOT);
@@ -62,9 +71,13 @@ bool ProcessOSXShortcuts(XBMC_Event& event)
       }
       case XBMCK_h: // CMD-h to hide (but we minimize for now)
       case XBMCK_m: // CMD-m to minimize
-        KODI::MESSAGING::CApplicationMessenger::GetInstance().PostMsg(TMSG_MINIMIZE);
+      {
+        XBMC_Event newEvent;
+        memset(&newEvent, 0, sizeof(newEvent));
+        newEvent.type = XBMC_MINIMIZE;
+        CWinEvents::MessagePush(&newEvent);
         return true;
-        
+      }
       case XBMCK_v: // CMD-v to paste clipboard text
         if (g_Windowing.IsTextInputEnabled())
         {
