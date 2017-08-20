@@ -18,38 +18,16 @@
  *
  */
 
-#include "system.h"
 #include "Application.h"
 #include "AppParamParser.h"
-#include "settings/AdvancedSettings.h"
-#include "FileItem.h"
-#include "PlayListPlayer.h"
-#include "utils/log.h"
 #include "utils/SystemInfo.h"
 #include "platform/xbmc.h"
 #include "platform/XbmcContext.h"
-#include <sys/resource.h>
-#include <signal.h>
-#include "Util.h"
-#ifdef HAS_LIRC
-#include "input/linux/LIRC.h"
-#endif
 #include "windowing/WindowingFactory.h"
-#include "windowing/osx/WinEventsOSX.h"
-
-#import <sys/param.h> /* for MAXPATHLEN */
-#import <unistd.h>
-
-#import "platform/darwin/osx/CocoaInterface.h"
-#import "platform/darwin/DarwinUtils.h"
-
-#import "linux/PlatformDefs.h"
-#import "messaging/ApplicationMessenger.h"
 #import "storage/osx/DarwinStorageProvider.h"
 
 #import "platform/darwin/DarwinUtils.h"
 #import "MainApplication.h"
-#import "windowing/WinSystem.h"
 
 
 // For some reaon, Apple removed setAppleMenu from the headers in 10.4,
