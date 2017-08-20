@@ -499,7 +499,7 @@ void CWinSystemOSX::FinishWindowResize(int newWidth, int newHeight)
   OSXGLView *view = [window contentView];
   NSOpenGLContext *context = [view getGLContext];
 
-  [(NSOpenGLContext*)context performSelectorOnMainThread:@selector(update:) withObject:nil waitUntilDone:YES];
+  [context performSelectorOnMainThread:@selector(update) withObject:nil waitUntilDone:YES];
 
   m_nWidth = newWidth;
   m_nHeight = newHeight;
