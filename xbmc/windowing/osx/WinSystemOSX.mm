@@ -410,24 +410,7 @@ bool CWinSystemOSX::CreateNewWindow(const std::string& name, bool fullScreen, RE
   [(NSWindow*)m_appWindow performSelectorOnMainThread:@selector(setTitle:) withObject:title waitUntilDone:YES];
   [(NSWindow*)m_appWindow performSelectorOnMainThread:@selector(makeKeyAndOrderFront:) withObject:nil waitUntilDone:YES];
 
-  //NSEnableScreenUpdates();
-
-  // check if we have to hide the mouse after creating the window
-  // in case we start windowed with the mouse over the window
-  // the tracking area mouseenter, mouseexit are not called
-  // so we have to decide here to initial hide the os cursor
-  NSPoint mouse = [NSEvent mouseLocation];
-  if ([NSWindow windowNumberAtPoint:mouse belowWindowWithWindowNumber:0] == ((NSWindow *)m_appWindow).windowNumber)
-  {
-    // warp XBMC cursor to our position
-    NSPoint locationInWindowCoords = [(NSWindow *)m_appWindow mouseLocationOutsideOfEventStream];
-    XBMC_Event newEvent;
-    memset(&newEvent, 0, sizeof(newEvent));
-    newEvent.type = XBMC_MOUSEMOTION;
-    newEvent.motion.x =  locationInWindowCoords.x;
-    newEvent.motion.y =  locationInWindowCoords.y;
-    g_application.OnEvent(newEvent);
-  }
+  HandleNativeMousePosition();
   [pool release];
 
   SetFullScreen(m_bFullScreen, res, false);
@@ -442,6 +425,36 @@ bool CWinSystemOSX::CreateNewWindow(const std::string& name, bool fullScreen, RE
   RETRO::CRPProcessInfoOSX::RegisterRendererFactory(new RETRO::CRendererFactoryOpenGL);
 
   return true;
+}
+
+// decide if the native mouse is over our window or not and
+// hide or show the native mouse accordingly. This
+// should be called after switching to windowed mode (or
+// starting up in windowed mode) for making
+// the native mouse visible or not based on the current
+// mouse position
+void CWinSystemOSX::HandleNativeMousePosition()
+{
+  // check if we have to hide the mouse in case the mouse over the window
+  // the tracking area mouseenter, mouseexit are not called
+  // so we have to decide here to initial hide the os cursor
+  // same goes for having the mouse pointer outside of the window
+  NSPoint mouse = [NSEvent mouseLocation];
+  if ([NSWindow windowNumberAtPoint:mouse belowWindowWithWindowNumber:0] == ((NSWindow *)m_appWindow).windowNumber)
+  {
+    // warp XBMC cursor to our position
+    NSPoint locationInWindowCoords = [(NSWindow *)m_appWindow mouseLocationOutsideOfEventStream];
+    XBMC_Event newEvent;
+    memset(&newEvent, 0, sizeof(newEvent));
+    newEvent.type = XBMC_MOUSEMOTION;
+    newEvent.motion.x =  locationInWindowCoords.x;
+    newEvent.motion.y =  locationInWindowCoords.y;
+    g_application.OnEvent(newEvent);
+  }
+  else// show native cursor as its outside of our window
+  {
+    Cocoa_ShowMouse();
+  }
 }
 
 // this is either called from SetFullScreen (so internally) or
@@ -534,6 +547,7 @@ bool CWinSystemOSX::SetFullScreen(bool fullScreen, RESOLUTION_INFO& res, bool bl
   {
     // Windowed Mode
     ResizeWindow(m_nWidth, m_nHeight, m_lastX, m_lastY);
+    HandleNativeMousePosition();
   }
 
   [window setAllowsConcurrentViewDrawing:YES];

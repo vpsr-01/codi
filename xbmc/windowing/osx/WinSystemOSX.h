@@ -77,6 +77,7 @@ public:
   
 protected:
   virtual std::unique_ptr<KODI::WINDOWING::IOSScreenSaver> GetOSScreenSaverImpl() override;
+  void  HandleNativeMousePosition();
   bool  FlushBuffer(void);
   void  StartTextInput();
   void  StopTextInput();
