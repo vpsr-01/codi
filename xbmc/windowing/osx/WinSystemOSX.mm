@@ -34,6 +34,8 @@
 #include "OSXGLView.h"
 #include "OSXGLWindow.h"
 #include "OSXScreenManager.h"
+#include "ServiceBroker.h"
+#include "settings/settings.h"
 #include "VideoSyncOsx.h"
 
 
@@ -99,6 +101,15 @@ void CWinSystemOSX::UpdateResolutions()
   CWinSystemBase::UpdateResolutions();
   
   m_pScreenManager->UpdateResolutions();
+  bool blankOtherDisplays = CServiceBroker::GetSettings().GetBool(CSettings::SETTING_VIDEOSCREEN_BLANKDISPLAYS);
+  if (blankOtherDisplays && m_bFullScreen)
+  {
+      m_pScreenManager->BlankOtherDisplays(m_pScreenManager->GetCurrentScreen());
+  }
+  else
+  {
+      m_pScreenManager->UnblankDisplays();
+  }
 }
 
 void CWinSystemOSX::UpdateDesktopResolution(RESOLUTION_INFO& newRes, int screen, int width, int height, float refreshRate, uint32_t dwFlags)
@@ -543,12 +554,21 @@ bool CWinSystemOSX::SetFullScreen(bool fullScreen, RESOLUTION_INFO& res, bool bl
     // ensure we use the screen rect origin here - because we might want to display on
     // a different monitor (which has the monitor offset in x and y origin ...)
     ResizeWindow(m_nWidth, m_nHeight, screenRect.origin.x, screenRect.origin.y);
+    
+    // blank all other dispalys if requested
+    if (blankOtherDisplays)
+    {
+        m_pScreenManager->BlankOtherDisplays(res.iScreen);
+    }
   }
   else
   {
     // Windowed Mode
     ResizeWindow(m_nWidth, m_nHeight, m_lastX, m_lastY);
     HandleNativeMousePosition();
+
+    // its always safe to unblank other displays - even if they are not blanked...
+    m_pScreenManager->UnblankDisplays();
   }
 
   [window setAllowsConcurrentViewDrawing:YES];
