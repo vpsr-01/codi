@@ -133,23 +133,8 @@ bool CWinSystemOSX::DestroyWindowSystem()
   
   m_pScreenManager->Deinit();
 
-  DestroyWindowInternal();
-  
-  if (m_glView)
-  {
-    // normally, this should happen here but we are racing internal object destructors
-    // that make GL calls. They crash if the GLView is released.
-    //[(OSXGLView*)m_glView release];
-    m_glView = NULL;
-  }
-  
-  return true;
-}
-
-bool CWinSystemOSX::DestroyWindowInternal()
-{
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
+  
   // set this 1st, we should really mutex protext m_appWindow in this class
   m_bWindowCreated = false;
   if (m_appWindow)
@@ -159,11 +144,17 @@ bool CWinSystemOSX::DestroyWindowInternal()
     [oldAppWindow setContentView:nil];
     [oldAppWindow release];
   }
-
+  
   [pool release];
   
-  m_pScreenManager->RegisterWindow(nil);
-
+  if (m_glView)
+  {
+    // normally, this should happen here but we are racing internal object destructors
+    // that make GL calls. They crash if the GLView is released.
+    //[(OSXGLView*)m_glView release];
+    m_glView = NULL;
+  }
+  
   return true;
 }
 
