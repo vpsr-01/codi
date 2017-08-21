@@ -29,11 +29,11 @@
 #include "utils/StringUtils.h"
 #include "windowing/osx/WinSystemOSX.h"
 
+#include <algorithm>
 #import <Cocoa/Cocoa.h>
 #import <IOKit/graphics/IOGraphicsLib.h>
 
 //------------------------------------------------------------------------------------------
-#define MAX_DISPLAYS 32
 
 // if there was a devicelost callback but no device reset for 3 secs
 // a timeout fires the reset callback (for ensuring that e.x. AE isn't stuck)
@@ -291,11 +291,15 @@ COSXScreenManager::COSXScreenManager() : m_lostDeviceTimer(this)
   m_movedToOtherScreen = false;
   m_lastDisplayNr = -1;
   m_pAppWindow = nil;
+  
+  for (int i=0; i<MAX_DISPLAYS; i++)
+  {
+    m_blankingWindows[i] = 0;
+  }
 }
 
 COSXScreenManager::~COSXScreenManager()
 {
-  
 }
 
 void COSXScreenManager::Init(CWinSystemOSX *windowing)
@@ -311,6 +315,7 @@ void COSXScreenManager::RegisterWindow(NSWindow *appWindow)
 
 void COSXScreenManager::Deinit()
 {
+  UnblankDisplays();
   CGDisplayRemoveReconfigurationCallback(DisplayReconfigured, (void*)this);
   m_pWindowing = nil;
 }
@@ -660,4 +665,71 @@ void COSXScreenManager::HandlePossibleRefreshrateChange()
   }
 }
 
+void CloseWindow(NSWindow *window)
+{
+  [window close];
+  if ([window isReleasedWhenClosed] == NO)
+    [window release];
+}
+
+/*\brief Blank all display but the display with the given index
+ *@param screen_index - the index of the display that should NOT be blanked
+ */
+void COSXScreenManager::BlankOtherDisplays(int screen_index)
+{
+  Cocoa_RunBlockOnMainQueue(^{
+    
+    CGCaptureAllDisplays();
+    NSUInteger numDisplays = std::min((NSUInteger)MAX_DISPLAYS,[[NSScreen screens] count]);
+  
+    // Blank.
+    for (int i=0; i<numDisplays; i++)
+    {
+      if (i != screen_index && m_blankingWindows[i] == 0)
+      {
+        // Get the size.
+        NSScreen* pScreen = [[NSScreen screens] objectAtIndex:i];
+        NSRect    screenRect = [pScreen frame];
+      
+        // Build a blanking window.
+        screenRect.origin = NSZeroPoint;
+        m_blankingWindows[i] = [[NSWindow alloc] initWithContentRect:screenRect
+                                                 styleMask:NSBorderlessWindowMask
+                                                 backing:NSBackingStoreBuffered
+                                                 defer:NO
+                                                 screen:pScreen];
+
+        [m_blankingWindows[i] setBackgroundColor:[NSColor blackColor]];
+        [m_blankingWindows[i] setLevel:CGShieldingWindowLevel()];
+        [m_blankingWindows[i] makeKeyAndOrderFront:nil];
+      }
+      else// ensure the screen that shouldn't be blanked really isn't
+      {
+        CloseWindow(m_blankingWindows[i]);
+        m_blankingWindows[i] = 0;
+      }
+    }
+    CGReleaseAllDisplays();
+  });
+}
+
+void COSXScreenManager::UnblankDisplays(void)
+{
+  Cocoa_RunBlockOnMainQueue(^{
+    
+    CGCaptureAllDisplays();
+    NSUInteger numDisplays = std::min((NSUInteger)MAX_DISPLAYS,[[NSScreen screens] count]);
+  
+    for (int i=0; i<numDisplays; i++)
+    {
+      if (m_blankingWindows[i] != 0)
+      {
+        // Get rid of the blanking windows we created.
+        CloseWindow(m_blankingWindows[i]);
+        m_blankingWindows[i] = 0;
+      }
+    }
+    CGReleaseAllDisplays();
+  });
+}
 

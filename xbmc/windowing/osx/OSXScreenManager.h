@@ -28,6 +28,8 @@ class IDispResource;
 class CWinSystemOSX;
 @class NSWindow;
 
+#define MAX_DISPLAYS 32
+
 class COSXScreenManager : public ITimerCallback
 {
 public:
@@ -71,6 +73,10 @@ public:
   // returns true if the display nummer differs from the last display number
   bool  SetLastDisplayNr(int lastDisplayNr);
   bool  SwitchToVideoMode(int width, int height, double refreshrate, int screenIdx);
+  
+  void BlankOtherDisplays(int screen_index);
+  void UnblankDisplays(void);
+
 
   
 protected:
@@ -89,4 +95,6 @@ protected:
   bool                         m_movedToOtherScreen;
   int                          m_lastDisplayNr;
   NSWindow                    *m_pAppWindow;
+  NSWindow                    *m_blankingWindows[MAX_DISPLAYS];
+
 };
